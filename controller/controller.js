@@ -9,7 +9,7 @@ const login = async (req, res) => {
     try {
 
         let state = "generateRanddajsipfuhgwrosdjomString(16)";
-        let scope = 'user-read-private user-read-email';
+        const scope = 'user-read-private user-read-email user-top-read user-read-currently-playing user-modify-playback-state user-read-playback-state';
 
         const queryParams = querystring.stringify({
             response_type: 'code',
@@ -69,7 +69,8 @@ const getToken = async (req, res) => {
 const fetchTopTenTracks = async (req, res) => {
     try {
         const fetchData = await axios.get(
-            'https://api.spotify.com/v1/me/top/tracks?limit=10',
+            // can use this trackIds in query string= 6rqhFgbbKwnb9MLmUQDhG6
+            `https://api.spotify.com/v1/tracks?limit=10&ids=${req.query.trackIds}`,
             {
                 headers: {
                     Authorization: `Bearer ${req.query.token}`
@@ -122,11 +123,15 @@ const playTrack = async (req, res) => {
         const fetchData = await axios.put(
             'https://api.spotify.com/v1/me/player/play',
             {
-                uris: [`spotify:track:${req.query.trackId}`]
+                "context_uri": "spotify:album:5ht7ItJgpBH7W6vJ5BqpPr",
+                "offset": {
+                    "position": 5
+                },
+                "position_ms": 0
             },
             {
                 headers: {
-                    Authorization: `Bearer ${ACCESS_TOKEN}`
+                    Authorization: `Bearer ${req.query.token}`
                 }
             }
         );
